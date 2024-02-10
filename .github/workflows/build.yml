@@ -13,3 +13,9 @@ jobs:
         with:
           name: unity-guid-rewriter
           path: target/release/unity-guid-rewriter.exe
+      - uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            target/release/unity-guid-rewriter.exe
+            LICENSE

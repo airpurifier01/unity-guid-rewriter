@@ -20,7 +20,10 @@ struct Options {
 }
 
 fn main() {
-    env_logger::init();
+    env_logger::Builder::new()
+        .filter_level(log::LevelFilter::Info)
+        .parse_default_env()
+        .init();
 
     let Options {
         ignore,
@@ -31,7 +34,7 @@ fn main() {
     let working_dir = std::env::current_dir().unwrap();
     let scan_dir = scan_dir.map_or(Cow::Borrowed(&working_dir), Cow::Owned);
     let ignore = ignore
-        .map_or(Cow::Borrowed("png,git"), Cow::Owned)
+        .map_or(Cow::Borrowed("png,git,fbx,exe"), Cow::Owned)
         .split(",")
         .map(|s| format!(".{}", s.trim()))
         .collect::<Vec<_>>();
@@ -40,7 +43,7 @@ fn main() {
     apply_mapping(&working_dir, &ignore, &mapping, force);
 
     if !force {
-        log::info!("Dry-run: no changes made. Use --force or -f to apply changes.");
+        log::warn!("Dry-run: no changes made. Use --force or -f to apply changes.");
     }
 }
 
